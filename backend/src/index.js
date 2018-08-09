@@ -25,13 +25,13 @@ app.get('/todos', (req, res) => {
 
 app.post('/todos', (req, res) => {
   const someTodo = new Todo({
-    content: req.body.text,
-    finished: req.body.status,
+    content: req.body.content,
+    finished: req.body.finished,
   });
   Todo.find({ content: someTodo.content }).then((todos) => {
     if (todos.length === 0) {
       someTodo.save().then((todo) => {
-        res.send(todo._id);// eslint-disable-line
+        res.send(todo);
       }).catch((err) => {
         res.send(err);
       });
