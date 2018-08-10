@@ -30,9 +30,7 @@ document.addEventListener('DOMContentLoaded', e => {
             todo.classList.add('todo--complete');
             tick.classList.remove('hidden');
         }
-        // this.parentElement.parentElement.classList.toggle('todo--complete');
-        // this.nextElementSibling.children[0].classList.toggle('hidden');
-        //todo__square__checkbox
+
         fetch(`http://127.0.0.1:3000/todos/${elementId}`,{
             method: 'PATCH',
             headers: {
@@ -40,12 +38,7 @@ document.addEventListener('DOMContentLoaded', e => {
             },
             body: JSON.stringify({finished: todo.classList.contains('todo--complete')? true : false})
         })
-        .then(res => res.json())
-        .then(json => {
-            console.log(json)
-            // const todoToRemove = document.querySelector(`[mongo-id="${String(json._id)}"]`);
-            // todoToRemove.parentElement.removeChild(todoToRemove);
-        })
+        .then(res => console.log(todo.classList))
         .catch(e => console.log(e))
     };
 
@@ -54,6 +47,9 @@ document.addEventListener('DOMContentLoaded', e => {
         const newTodo = document.createElement('li');
         newTodo.classList.add('todo');
         newTodo.setAttribute('mongo-id', id);
+        if(finished === true) {
+            newTodo.classList.add('todo--complete');
+        }
 
         const todoList = document.getElementById('todo-list');
 
@@ -66,8 +62,10 @@ document.addEventListener('DOMContentLoaded', e => {
         
         const newTick = document.createElement('span');
         newTick.classList.add('tick');
-        newTick.classList.add('hidden');
-
+        if(finished === false) {
+            newTick.classList.add('hidden');
+        }
+        
         const newCheckboxStyled = document.createElement('span');
         newCheckboxStyled.classList.add('todo__square__checkbox-styled');
 
@@ -132,52 +130,6 @@ document.addEventListener('DOMContentLoaded', e => {
         e.preventDefault();
         const todoText = formInput.value;
         addTodo(todoText);
-
-        // const newTodo = document.createElement('li')
-        // newTodo.classList.add('todo')
-       
-        // const todoList = document.getElementById('todo-list');
-
-        // const newTodoSqr = document.createElement('div')
-        // newTodoSqr.classList.add('todo__square');
-       
-        // const newCheckbox = document.createElement('input')
-        // newCheckbox.classList.add('todo__square__checkbox');
-        
-        // const newTick = document.createElement('span');
-        // newTick.classList.add('tick', 'hidden')
-        
-        // const newCheckboxStyled = document.createElement('span')
-        // newCheckboxStyled.classList.add('todo__square__checkbox-styled');
-        // newCheckbox.addEventListener('click', function(e) {
-        //     this.parentElement.parentElement.classList.toggle('todo--complete');
-        //     this.nextElementSibling.children[0].classList.toggle('hidden');
-        // });
-
-        // const newTodoText = document.createElement('span')
-        // newTodoText.classList.add('todo__text');
-        // newTodoText.innerText = formInput.value;
-        
-        // const newTrash = document.createElement('a');
-        // newTrash.classList.add('todo__trash');
-        
-        // const newTrashLayer = document.createElement('div')
-        // newTrashLayer.classList.add('todo__trash__layer');
-        // newTrash.addEventListener('click', function(e) {
-        //     this.parentElement.parentElement.removeChild(this.parentElement)
-        // })
-
-        
-        // newTodo.appendChild(newTodoSqr);
-        // newTodoSqr.appendChild(newCheckbox);
-        // newTodoSqr.appendChild(newCheckboxStyled);
-        // newCheckboxStyled.appendChild(newTick)
-        // newTodo.appendChild(newTodoText);
-        // newTodo.appendChild(newTrash);
-        // newTrash.appendChild(newTrashLayer);
-
-        // todoList.appendChild(newTodo);
-        // formInput.value = '';
     });
 });
 

@@ -9,25 +9,8 @@ const { mongoURI } = require('./config/keys');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-
 app.use(bodyParser.json());
-app.use(cors());
 app.options('/todos/:id', cors()) 
-
-
-var allowCrossDomain = function(req, res, next) {
-  if ('OPTIONS' == req.method) {
-    res.header('Access-Control-Allow-Origin', '*');
-    res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,PATCH,OPTIONS');
-    res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, Content-Length, X-Requested-With');
-    res.send(200);
-  }
-  else {
-    next();
-  }
-};
-
-app.use(allowCrossDomain);
 
 mongoose.connect(mongoURI, { useNewUrlParser: true });
 const db = mongoose.connection;
@@ -76,9 +59,9 @@ app.delete('/todos/:id', (req, res) => {
 });
 
 app.patch('/todos/:id', (req, res) => {
-  const { status } = req.body;
+  const { finished } = req.body;
   const { id } = req.params;
-  Todo.findByIdAndUpdate(id, { $set: { finished: status } }, { new: true })
+  Todo.findByIdAndUpdate(id, { $set: { finished: finished } }, { new: true })
   .then(() => {
     res.send();
   })
