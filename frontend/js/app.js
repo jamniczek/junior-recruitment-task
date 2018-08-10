@@ -19,24 +19,32 @@ document.addEventListener('DOMContentLoaded', e => {
     };
 
     const toggleTodo = function() {
-        const elementId = this.parentElement.getAttribute('mongo-id');
-        const currentFinished = 
-
-        this.parentElement.parentElement.classList.toggle('todo--complete');
-        this.nextElementSibling.children[0].classList.toggle('hidden');
-
+        const todo = this.parentElement.parentElement;
+        const elementId = todo.getAttribute('mongo-id');
+        const tick = this.nextElementSibling.children[0];
+        console.log(elementId)
+        if(todo.classList.contains('todo--complete')) {
+            todo.classList.remove('todo--complete');
+            tick.classList.add('hidden');
+        } else {
+            todo.classList.add('todo--complete');
+            tick.classList.remove('hidden');
+        }
+        // this.parentElement.parentElement.classList.toggle('todo--complete');
+        // this.nextElementSibling.children[0].classList.toggle('hidden');
+        //todo__square__checkbox
         fetch(`http://127.0.0.1:3000/todos/${elementId}`,{
             method: 'PATCH',
             headers: {
                 'Content-type': 'application/json'
             },
-            body: JSON.stringify({finished: false})
+            body: JSON.stringify({finished: todo.classList.contains('todo--complete')? true : false})
         })
         .then(res => res.json())
         .then(json => {
             console.log(json)
-            const todoToRemove = document.querySelector(`[mongo-id="${String(json._id)}"]`);
-            todoToRemove.parentElement.removeChild(todoToRemove);
+            // const todoToRemove = document.querySelector(`[mongo-id="${String(json._id)}"]`);
+            // todoToRemove.parentElement.removeChild(todoToRemove);
         })
         .catch(e => console.log(e))
     };
@@ -54,12 +62,12 @@ document.addEventListener('DOMContentLoaded', e => {
        
         const newCheckbox = document.createElement('input');
         newCheckbox.classList.add('todo__square__checkbox');
+        newCheckbox.addEventListener('click', toggleTodo)
         
         const newTick = document.createElement('span');
         newTick.classList.add('tick');
-        if (finished === false)  {
-            newTick.classList.add('hidden');
-        }
+        newTick.classList.add('hidden');
+
         const newCheckboxStyled = document.createElement('span');
         newCheckboxStyled.classList.add('todo__square__checkbox-styled');
 
@@ -124,10 +132,6 @@ document.addEventListener('DOMContentLoaded', e => {
         e.preventDefault();
         const todoText = formInput.value;
         addTodo(todoText);
-
-        //fetch()
-
-
 
         // const newTodo = document.createElement('li')
         // newTodo.classList.add('todo')
