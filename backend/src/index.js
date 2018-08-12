@@ -10,7 +10,7 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 app.use(bodyParser.json());
-app.options('/todos/:id', cors()) 
+app.use(cors()) ;
 
 mongoose.connect(mongoURI, { useNewUrlParser: true });
 const db = mongoose.connection;
@@ -58,9 +58,10 @@ app.delete('/todos/:id', (req, res) => {
   });
 });
 
-app.patch('/todos/:id', (req, res) => {
+app.patch('/todos/:id',cors(),  (req, res) => {
   const { finished } = req.body;
   const { id } = req.params;
+  console.log(req.body)
   Todo.findByIdAndUpdate(id, { $set: { finished: finished } }, { new: true })
   .then(() => {
     res.send();

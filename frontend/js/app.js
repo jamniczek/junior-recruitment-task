@@ -22,24 +22,30 @@ document.addEventListener('DOMContentLoaded', e => {
         const todo = this.parentElement.parentElement;
         const elementId = todo.getAttribute('mongo-id');
         const tick = this.nextElementSibling.children[0];
-        console.log(elementId)
-        if(todo.classList.contains('todo--complete')) {
-            todo.classList.remove('todo--complete');
-            tick.classList.add('hidden');
-        } else {
-            todo.classList.add('todo--complete');
-            tick.classList.remove('hidden');
-        }
 
         fetch(`http://127.0.0.1:3000/todos/${elementId}`,{
             method: 'PATCH',
+            mode: 'cors',
             headers: {
+                'Access-Control-Allow-Origin':'*' ,
+                'Access-Control-Allow-Methods': 'PATCH',
+                'Access-Control-Allow-Headers': 'Content-Type',
                 'Content-type': 'application/json'
             },
-            body: JSON.stringify({finished: todo.classList.contains('todo--complete')? true : false})
+            body: JSON.stringify({finished: todo.classList.contains('todo--complete')? false : true})
         })
-        .then(res => console.log(todo.classList))
-        .catch(e => console.log(e))
+        .then(res => {
+            console.log(todo.classList)
+            if(todo.classList.contains('todo--complete')) {
+                todo.classList.remove('todo--complete');
+                tick.classList.add('hidden');
+            } else {
+                todo.classList.add('todo--complete');
+                tick.classList.remove('hidden');
+            }
+        })
+            
+        .catch(e => console.error(e))
     };
 
     const buildTodo = (content, finished, id) => {
@@ -113,7 +119,6 @@ document.addEventListener('DOMContentLoaded', e => {
         })
         .then(res => res.json())
         .then(json =>{
-            console.log(json);
             if (json.message === 'such todo already exsts!') {
                 alert('You cannot make duplicate todo!');
             } else {
