@@ -12,11 +12,10 @@ document.addEventListener('DOMContentLoaded', (e) => {
         })
             .then(res => res.json())
             .then((json) => {
-                console.log(json);
                 const todoToRemove = document.querySelector(`[mongo-id="${String(json._id)}"]`);
                 todoToRemove.parentElement.removeChild(todoToRemove);
             })
-            .catch(err => console.log(err));
+            .catch(err => handleInvalidInput(err, 5000));
     };
 
     const toggleTodo = function () {
@@ -36,7 +35,6 @@ document.addEventListener('DOMContentLoaded', (e) => {
             body: JSON.stringify({ finished: !todo.classList.contains('todo--complete') }),
         })
             .then(() => {
-                console.log(todo.classList);
                 if (todo.classList.contains('todo--complete')) {
                     todo.classList.remove('todo--complete');
                     tick.classList.add('hidden');
@@ -46,7 +44,7 @@ document.addEventListener('DOMContentLoaded', (e) => {
                 }
             })
 
-            .catch(e => console.error(e));
+            .catch(e => handleInvalidInput(e, 5000));
     };
 
     const buildTodo = (content, finished, id) => {
@@ -99,7 +97,7 @@ document.addEventListener('DOMContentLoaded', (e) => {
         formInput.value = '';
     };
 
-    const handleInvalidInput = (message) => {
+    const handleInvalidInput = (message, delay) => {
         const warnPar = document.createElement('p');
         warnPar.innerText = message;
         warnPar.style.color = 'red';
@@ -107,23 +105,29 @@ document.addEventListener('DOMContentLoaded', (e) => {
         todoList.appendChild(warnPar);
         setTimeout(() => {
             warnPar.parentElement.removeChild(warnPar)
-        }, 3000);
+        }, delay);
     }
 
     const getTodos = () => {
+        const warnPar = document.createElement('p');
+        warnPar.innerText = 'Checking todos...';
+        warnPar.style.color = '#000';
+        warnPar.style.padding = '5px';
+        todoList.appendChild(warnPar);
         fetch(url)
             .then(res => res.json())
             .then((json) => {
+                warnPar.parentElement.removeChild(warnPar)
                 json.forEach((element) => {
                     buildTodo(element.content, element.finished, element._id);
                 });
             })
-            .catch(err => console.log(err));
+            .catch(err => handleInvalidInput(err, 5000));
     };
 
     const addTodo = (text) => {
         if (text === '') {
-            handleInvalidInput('Todo cannot be empty!');
+            handleInvalidInput('Todo cannot be empty!', 3000);
         } else {
             fetch(url, {
                 method: 'POST',
@@ -135,12 +139,12 @@ document.addEventListener('DOMContentLoaded', (e) => {
                 .then(res => res.json())
                 .then((json) => {
                     if (json.message) {
-                        handleInvalidInput(json.message);
+                        handleInvalidInput(json.message, 3000);
                     } else {
                         buildTodo(json.content, json.finished, json._id);
                     }
                 })
-                .catch(err => console.log(err));
+                .catch(err => handleInvalidInput(err, 5000));
         }
 
     };
