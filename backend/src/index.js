@@ -29,7 +29,7 @@ app.get('/todos', (req, res) => {
 
 app.post('/todos', (req, res) => {
   if(req.body.content === '' ) {
-    return res.send({ message: 'Seriuusly... todo CANNOT be empty.' })
+    return res.send({ message: 'Todo cannot be empty!' })
   }
   const someTodo = new Todo({
     content: req.body.content,
